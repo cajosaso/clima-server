@@ -32,14 +32,28 @@ app.get("/weather/:city/forecast", (req,res)=>{
         console.log(response)
         console.log(body)
         let stats=JSON.parse(body).list.map((e)=>{ 
+            date = new Date(parseInt(e.dt,10)*1000)
+
             return {
-                "dt":e.dt,
+                "day":date.getFullYear()+"-"+date.getMonth()+"-"+date.getDate(),
+                "time":date.getHours()+"-"+date.getMinutes(),
                 "temp":e.main.temp,
                 "humidity":e.main.humidity,
                 "icon":e.weather[0].icon
             }
         })
-        res.json(stats)
+        let groupedByDate={}
+        stats.forEach(e => {
+            if(! groupedByDate[e.day] ){
+                groupedByDate[e.day]=[]
+            }
+            groupedByDate[e.day].push(e)
+        });
+
+        Object.keys(groupedByDate).forEach((day)=>{
+            //TODO combinar los horarios
+        })
+        res.json(groupedByDate)
     })
 })
 
