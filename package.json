@@ -19,7 +19,9 @@
   "homepage": "https://github.com/cajosaso/clima-server#readme",
   "dependencies": {
     "express": "^4.16.3",
-    "node-fetch": "^2.2.0",
+    "geo-tz": "^4.0.1",
+    "moment": "^2.22.2",
+    "moment-timezone": "^0.5.21",
     "request": "^2.88.0"
   }
 }

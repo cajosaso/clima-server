@@ -3,6 +3,8 @@ const app = express()
 const cities=require("./supported_cities.js")
 const api_key=require("./api_key.js")
 const request=require("request")
+const moment=require("moment-timezone")
+const geoTz=require("geo-tz")
 
 app.get('/', (req, res) => res.send('Hello World!'))
 
@@ -15,10 +17,14 @@ app.get("/weather/:city/current", (req,res)=>{
         console.log(error)
         console.log(response)
         console.log(body)
-        let stats=JSON.parse(body).main
+        let jsonBody=JSON.parse(body)
+        let stats=jsonBody.main
+        let tz=geoTz(jsonBody.coord.lat,jsonBody.coord.lon)
         res.json({
             temp:stats.temp,
-            humidity:stats.humidity
+            humidity:stats.humidity,
+            dt:moment(jsonBody.dt*1000).tz(tz).format("LLLL"),
+
         })
     })
 })
