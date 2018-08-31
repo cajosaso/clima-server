@@ -20,11 +20,25 @@ app.get("/weather/:city/current", (req,res)=>{
         let jsonBody=JSON.parse(body)
         let stats=jsonBody.main
         let tz=geoTz(jsonBody.coord.lat,jsonBody.coord.lon)
+        let sunrise=jsonBody.sys.sunrise*1000
+        let sunset=jsonBody.sys.sunset*1000
+        let now=Date.now()
+        let beforeSunrise=(now<=sunrise)
+        let afterSunset=(now>=sunset)
+        let night=(beforeSunrise || afterSunset)
+        let sun=""
+
+        if(night){
+            sun="night"
+        }else{
+            sun="day"
+        }
+
         res.json({
             temp:stats.temp,
             humidity:stats.humidity,
-            dt:moment(jsonBody.dt*1000).tz(tz).format("LLLL"),
-
+            sun:sun,
+            icon:jsonBody.weather[0].icon
         })
     })
 })
