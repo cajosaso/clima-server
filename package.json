@@ -1,0 +1,25 @@
+{
+  "name": "clima-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cajosaso/clima-server.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cajosaso/clima-server/issues"
+  },
+  "homepage": "https://github.com/cajosaso/clima-server#readme",
+  "dependencies": {
+    "express": "^4.16.3",
+    "node-fetch": "^2.2.0",
+    "request": "^2.88.0"
+  }
+}
