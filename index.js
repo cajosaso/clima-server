@@ -34,7 +34,7 @@ app.get('/cities/search/:query', (req, res) =>{
 })
 
 app.get("/weather/:city/current", (req,res)=>{
-    let cityName=req.params.city.split(" ").join("%20")
+    let cityName=encodeURIComponent(req.params.city)
     let url="http://api.openweathermap.org/data/2.5/weather?q="+cityName+"&APPID="+api_key+"&units=metric"
     console.log(url)
     request(url,function(error,response,body){
@@ -80,7 +80,7 @@ app.get("/weather/:city/current", (req,res)=>{
 })
 
 app.get("/weather/:city/forecast", (req,res)=>{
-    let cityName=req.params.city.split(" ").join("%20")
+    let cityName=encodeURIComponent(req.params.city)
     let url="http://api.openweathermap.org/data/2.5/forecast?q="+cityName+"&APPID="+api_key+"&units=metric"
     console.log(url)
     request(url,function(error,response,body){
