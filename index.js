@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express()
-const cities=require("./supported_cities.js")
+const cities=require("./supported_cities")
 const api_key=require("./api_key.js")
 const request=require("request")
 const moment=require("moment-timezone")
