@@ -8,7 +8,30 @@ const geoTz=require("geo-tz")
 
 app.get('/', (req, res) => res.send('Hello World!'))
 
+function acceptedBy(query,name){
+    return RegExp(query.toLocaleLowerCase()).test(name.toLocaleLowerCase())
+}
+
+
 app.get('/cities', (req, res) => res.json(cities))
+app.get('/cities/search/:query', (req, res) =>{
+    try{
+        let begin=cities.filter((name)=>acceptedBy("^"+req.params.query,name))
+        begin=begin.sort()
+
+        let others=cities.filter((name)=>acceptedBy(req.params.query,name))
+        others=others.filter((o)=>{
+            return begin.indexOf(o)<0
+        }).sort()
+
+        
+        res.json([].concat(begin,others))
+
+    }catch(e){
+        res.sendStatus(500)
+    }
+    
+})
 
 app.get("/weather/:city/current", (req,res)=>{
     let cityName=req.params.city.split(" ").join("%20")
