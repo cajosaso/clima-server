@@ -16,8 +16,20 @@ app.get("/weather/:city/current", (req,res)=>{
     console.log(url)
     request(url,function(error,response,body){
         console.log(error)
-        console.log(response)
         console.log(body)
+
+        if (error){
+            res.sendStatus(500)
+            return
+        }
+        if(response.statusCode!=200){
+            res.status(response.statusCode).json({
+                status:response.statusCode,
+                message:JSON.parse(body).message
+            })
+            return
+        }
+
         let jsonBody=JSON.parse(body)
         let stats=jsonBody.main
         let tz=geoTz(jsonBody.coord.lat,jsonBody.coord.lon)
@@ -50,8 +62,20 @@ app.get("/weather/:city/forecast", (req,res)=>{
     console.log(url)
     request(url,function(error,response,body){
         console.log(error)
-        console.log(response)
         console.log(body)
+        if (error){
+            res.sendStatus(500)
+            return
+        }
+        if(response.statusCode!=200){
+            res.status(response.statusCode).json({
+                status:response.statusCode,
+                message:JSON.parse(body).message
+            })
+            return
+        }
+
+        
         let jsonBody=JSON.parse(body)
         let tz=geoTz(jsonBody.city.coord.lat,jsonBody.city.coord.lon)
         let stats=JSON.parse(body).list.map((e)=>{ 
