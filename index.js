@@ -9,6 +9,7 @@ const geoTz=require("geo-tz")
 app.get('/', (req, res) => res.send('Hello World!'))
 
 app.get('/cities', (req, res) => res.json(cities))
+
 app.get("/weather/:city/current", (req,res)=>{
     let cityName=req.params.city.split(" ").join("%20")
     let url="http://api.openweathermap.org/data/2.5/weather?q="+cityName+"&APPID="+api_key+"&units=metric"
@@ -51,12 +52,15 @@ app.get("/weather/:city/forecast", (req,res)=>{
         console.log(error)
         console.log(response)
         console.log(body)
+        let jsonBody=JSON.parse(body)
+        let tz=geoTz(jsonBody.city.coord.lat,jsonBody.city.coord.lon)
         let stats=JSON.parse(body).list.map((e)=>{ 
-            date = new Date(parseInt(e.dt,10)*1000)
+            let date = new Date(parseInt(e.dt,10)*1000)
+            let fulldate= moment(parseInt(e.dt,10)*1000-1000).tz(tz)
 
             return {
-                "day":date.getFullYear()+"-"+date.getMonth()+"-"+date.getDate(),
-                "time":date.getHours()+"-"+date.getMinutes(),
+                "day":fulldate.format("YYYY-MM-DD"),
+                "time":fulldate.format("kk"),
                 "temp":e.main.temp,
                 "humidity":e.main.humidity,
                 "icon":e.weather[0].icon
@@ -69,11 +73,36 @@ app.get("/weather/:city/forecast", (req,res)=>{
             }
             groupedByDate[e.day].push(e)
         });
-
-        Object.keys(groupedByDate).forEach((day)=>{
-            //TODO combinar los horarios
+        let orderedDates = Object.keys(groupedByDate).sort()
+        let orderedRecords = orderedDates.map((d)=>groupedByDate[d])
+        let timedKeyRecords = orderedRecords.map((records)=>{
+            let o={}
+            records.forEach((r)=>{
+                o[r.time]=r
+            })
+            o=Object.keys(o).sort().map((k)=>o[k])
+            let noon=undefined
+            let midnight=undefined
+            o.forEach((weather)=>{
+                if(parseInt(weather.time)<=12){
+                    noon=weather
+                }
+                if(parseInt(weather.time)<=24){
+                    midnight=weather
+                }
+            })
+            return {
+                "noon":noon,
+                "midnight":midnight
+            }
         })
-        res.json(groupedByDate)
+
+        let resp={
+            now:moment().tz(tz).format("kk:mm-DD-MM-YYYY"),
+            forecast:timedKeyRecords
+        }
+
+        res.json(resp)
     })
 })
 
