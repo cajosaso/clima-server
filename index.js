@@ -144,9 +144,39 @@ app.get("/weather/:city/forecast", (req,res)=>{
             }
         })
 
+
+        let separatedTimedKeyRecords=timedKeyRecords.map((tkr)=>{
+            let ret={}
+            if(tkr["noon"]){
+                ret = {
+                    "noonDay":tkr.noon.day,
+                    "noonTime":tkr.noon.time,
+                    "noonTemp":tkr.noon.temp,
+                    "noonHumidity":tkr.noon.humidity,
+                    "noonIcon":tkr.noon.icon
+                }
+            }else{
+                ret = {
+                    "noonDay":null,
+                    "noonTime":null,
+                    "noonTemp":null,
+                    "noonHumidity":null,
+                    "noonIcon":null
+                }
+            }
+
+            ret.midnightDay=tkr.midnight.day
+            ret.midnightTime=tkr.midnight.time
+            ret.midnightHumidity=tkr.midnight.humidity
+            ret.midnightIcon=tkr.midnight.icon
+
+            return ret
+
+        })
+
         let resp={
             now:moment().tz(tz).format("kk:mm-DD-MM-YYYY"),
-            forecast:timedKeyRecords
+            forecast:separatedTimedKeyRecords
         }
 
         res.json(resp)
