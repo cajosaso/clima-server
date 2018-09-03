@@ -169,6 +169,7 @@ app.get("/weather/:city/forecast", (req,res)=>{
             ret.midnightTime=tkr.midnight.time
             ret.midnightHumidity=tkr.midnight.humidity
             ret.midnightIcon=tkr.midnight.icon
+            ret.midnightTemp=tkr.midnight.temp
 
             return ret
 
